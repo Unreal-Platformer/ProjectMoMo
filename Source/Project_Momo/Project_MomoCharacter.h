@@ -44,6 +44,13 @@ class AProject_MomoCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SaveAction;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LoadAction;
 public:
 	AProject_MomoCharacter();
 	
@@ -63,6 +70,10 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+private:
+	void SavePlayerData();
+	void InitPlayerData();
 
 public:
 	/** Returns CameraBoom subobject **/
