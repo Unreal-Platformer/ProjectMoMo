@@ -10,6 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/GameplayStatics.h"
+#include "Item.h"
+#include "../Public/GameInstance/MomoGameInstance.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 

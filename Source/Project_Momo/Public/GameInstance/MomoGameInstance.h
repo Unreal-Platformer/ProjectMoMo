@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "ItemInstance.generated.h"
+#include "MomoGameInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT_MOMO_API UItemInstance : public UGameInstance
+class PROJECT_MOMO_API UMomoGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
 public:
-	UItemInstance();
+	UMomoGameInstance();
 	struct FAITemData* GetItemDataFromRow(int32 Row);
 
 

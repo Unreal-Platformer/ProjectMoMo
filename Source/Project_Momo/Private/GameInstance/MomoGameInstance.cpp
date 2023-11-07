@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameInstance/ItemInstance.h"
+#include "GameInstance/MomoGameInstance.h"
 #include "Item.h"
 
-UItemInstance::UItemInstance()
+UMomoGameInstance::UMomoGameInstance()
 {
-	FString ItemDataPath = TEXT("/Script/Engine.DataTable'/Game/Items/Items.Items'"); 
+	FString ItemDataPath = TEXT("DataTable'/Game/Items/Items.Items'"); 
 	static ConstructorHelpers::FObjectFinder<UDataTable> DT_ABCHARACTER(*ItemDataPath);
 	if (DT_ABCHARACTER.Succeeded())
 	{
@@ -18,7 +18,7 @@ UItemInstance::UItemInstance()
 	}
 }
 
-FAITemData* UItemInstance::GetItemDataFromRow(int32 Row)
+FAITemData* UMomoGameInstance::GetItemDataFromRow(int32 Row)
 {
 	if (!AItemTable)
 		return nullptr;
