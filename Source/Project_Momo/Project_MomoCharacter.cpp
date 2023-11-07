@@ -10,7 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "MySaveGame.h"
+#include "SlotData.h"
 #include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -73,7 +73,7 @@ void AProject_MomoCharacter::BeginPlay()
 
 void AProject_MomoCharacter::SavePlayerData()
 {
-	UMySaveGame* NewSaveGame = NewObject<UMySaveGame>(); // 가비지 컬렉터 덕분에 Delete 안써도 됨.
+	USlotData* NewSaveGame = NewObject<USlotData>(); // 가비지 컬렉터 덕분에 Delete 안써도 됨.
 	NewSaveGame->PlayerPos = GetActorLocation();
 
 	if (false == UGameplayStatics::SaveGameToSlot(NewSaveGame, "SaveSlotName", 0))
@@ -84,10 +84,10 @@ void AProject_MomoCharacter::SavePlayerData()
 
 void AProject_MomoCharacter::InitPlayerData()
 {
-	UMySaveGame* MySaveGame = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot("SaveSlotName", 0));
+	USlotData* MySaveGame = Cast<USlotData>(UGameplayStatics::LoadGameFromSlot("SaveSlotName", 0));
 	if (nullptr == MySaveGame)
 	{
-		MySaveGame = GetMutableDefault<UMySaveGame>(); // Gets the mutable default object of a class.
+		MySaveGame = GetMutableDefault<USlotData>(); // Gets the mutable default object of a class.
 	}
 
 	SetActorLocation(MySaveGame->PlayerPos);

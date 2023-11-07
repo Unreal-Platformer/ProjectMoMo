@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MySaveGame.h"
+#include "SlotData.h"
 
-UMySaveGame::UMySaveGame()
+USlotData::USlotData()
 	: PlayerPos(FVector::ZeroVector)
 {
 }

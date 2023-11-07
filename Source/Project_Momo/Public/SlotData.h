@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "MySaveGame.generated.h"
+#include "SlotData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT_MOMO_API UMySaveGame : public USaveGame
+class PROJECT_MOMO_API USlotData : public USaveGame
 {
 	GENERATED_BODY()
 
 public:
-	UMySaveGame();
+	USlotData();
 
 public:
 	UPROPERTY()
