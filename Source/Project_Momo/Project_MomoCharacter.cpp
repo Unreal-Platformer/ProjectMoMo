@@ -10,10 +10,12 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "InteractiveActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Item.h"
 #include "SlotData.h"
 #include "../Public/GameInstance/MomoGameInstance.h"
+#include "InteractiveActor.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -62,7 +64,7 @@ void AProject_MomoCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
+	
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -95,6 +97,26 @@ void AProject_MomoCharacter::InitPlayerData()
 	SetActorLocation(MySaveGame->PlayerPos);
 }
 
+void AProject_MomoCharacter::RewindInteractiveActor()
+{
+	testingInteractiveActor->RewindActorPosition();
+}
+
+void AProject_MomoCharacter::SlowInteractiveActor()
+{
+	testingInteractiveActor->SlowActorMovement();
+}
+
+void AProject_MomoCharacter::QuickenInteractiveActor()
+{
+	testingInteractiveActor->QuickenActorMovement();
+}
+
+void AProject_MomoCharacter::StopInteractiveActor()
+{
+	testingInteractiveActor->StopActorMovement();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -118,6 +140,18 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		// Load
 		EnhancedInputComponent->BindAction(LoadAction, ETriggerEvent::Started, this, &AProject_MomoCharacter::InitPlayerData);
+
+		// Rewind
+		EnhancedInputComponent->BindAction(RewindObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::RewindInteractiveActor);
+
+		// Slow
+		EnhancedInputComponent->BindAction(SlowObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::SlowInteractiveActor);
+
+		// Quicken
+		EnhancedInputComponent->BindAction(QuickenObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::QuickenInteractiveActor);
+
+		// Stop
+		EnhancedInputComponent->BindAction(StopObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::StopInteractiveActor);
 	}
 	else
 	{

@@ -25,6 +25,18 @@ public:
 
 	UFUNCTION()
 	void ResetActorPosition();
+
+	UFUNCTION()
+	void RewindActorPosition();
+	
+	UFUNCTION()
+	void SlowActorMovement();
+
+	UFUNCTION()
+	void QuickenActorMovement();
+
+	UFUNCTION()
+	void StopActorMovement();
 	
 	UPROPERTY()
 	FVector actorPos;
