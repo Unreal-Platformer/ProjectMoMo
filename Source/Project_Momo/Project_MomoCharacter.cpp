@@ -10,8 +10,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "SlotData.h"
 #include "Kismet/GameplayStatics.h"
+#include "Item.h"
+#include "SlotData.h"
+#include "../Public/GameInstance/MomoGameInstance.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -73,7 +75,7 @@ void AProject_MomoCharacter::BeginPlay()
 
 void AProject_MomoCharacter::SavePlayerData()
 {
-	USlotData* NewSaveGame = NewObject<USlotData>(); // °¡ºñÁö ÄÃ·ºÅÍ ´öºÐ¿¡ Delete ¾È½áµµ µÊ.
+	USlotData* NewSaveGame = NewObject<USlotData>(); // ê°€ë¹„ì§€ ì»¬ë ‰í„° ë•ë¶„ì— Delete ì•ˆì¨ë„ ë¨.
 	NewSaveGame->PlayerPos = GetActorLocation();
 
 	if (false == UGameplayStatics::SaveGameToSlot(NewSaveGame, "SaveSlotName", 0))
