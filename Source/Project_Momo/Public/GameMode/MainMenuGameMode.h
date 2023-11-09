@@ -17,6 +17,9 @@ class PROJECT_MOMO_API AMainMenuGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
+	AMainMenuGameMode();
+
+public:
 	UFUNCTION(BlueprintCallable, Category = "UMG_Game")
 	void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidget);
 

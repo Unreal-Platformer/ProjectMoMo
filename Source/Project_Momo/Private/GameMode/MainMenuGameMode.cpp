@@ -1,8 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameMenu/MainMenuGameMode.h"
+#include "Widget/MainMenu.h"
 #include "Blueprint/UserWidget.h"
+#include "GameMode/MainMenuGameMode.h"
+
+
+AMainMenuGameMode::AMainMenuGameMode()
+{
+}
 
 void AMainMenuGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidget)
 {
