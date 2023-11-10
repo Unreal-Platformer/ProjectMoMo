@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class AInteractiveActor;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -56,6 +57,7 @@ public:
 	
 
 protected:
+	virtual void Tick(float DeltaSeconds);
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -71,14 +73,19 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+
 private:
 	void SavePlayerData();
 	void InitPlayerData();
+	void LineTraceObject();
 
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+private:
+	AInteractiveActor* InteractiveActor = nullptr;
 };
 
