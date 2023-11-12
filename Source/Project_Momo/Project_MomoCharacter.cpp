@@ -13,7 +13,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Item.h"
 #include "SlotData.h"
-#include "../Public/GameInstance/MomoGameInstance.h"
+#include "GameInstance/MomoGameInstance.h"
+#include "ActorComponent/CharacterStatComponent.h"
+#include "PlayerController/DefaultPlayerController.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -56,6 +58,9 @@ AProject_MomoCharacter::AProject_MomoCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	CharacterStat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("CharacterStat"));
+
 }
 
 void AProject_MomoCharacter::BeginPlay()
@@ -64,6 +69,7 @@ void AProject_MomoCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
+	DefaultPlayerController = Cast<ADefaultPlayerController>(GetController());
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
