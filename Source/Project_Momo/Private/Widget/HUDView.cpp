@@ -24,6 +24,6 @@ void UHUDView::UpdateCharacterStat()
 	if (CurrentCharacterStat->IsValidLowLevel())
 	{
 		if (nullptr != HPProgressBar)
-			HPProgressBar->SetPercent(1 - CurrentCharacterStat->GetHPRatio());
+			HPProgressBar->SetPercent(CurrentCharacterStat->GetHPRatio());
 	}
 }

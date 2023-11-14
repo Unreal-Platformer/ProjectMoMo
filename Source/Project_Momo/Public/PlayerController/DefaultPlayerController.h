@@ -25,7 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<class UHUDView> HUDViewClass;
+	TSubclassOf<UUserWidget> HUDViewClass;
 
 private:
 	UPROPERTY()

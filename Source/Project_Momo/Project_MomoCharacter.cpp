@@ -16,6 +16,7 @@
 #include "GameInstance/MomoGameInstance.h"
 #include "ActorComponent/CharacterStatComponent.h"
 #include "PlayerController/DefaultPlayerController.h"
+#include "Widget/HUDView.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -69,14 +70,18 @@ void AProject_MomoCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
-	DefaultPlayerController = Cast<ADefaultPlayerController>(GetController());
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	DefaultPlayerController = Cast<ADefaultPlayerController>(Controller);
+	if (DefaultPlayerController)
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(DefaultPlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		DefaultPlayerController->GetHUDView()->BindCharacterStat(CharacterStat);
 	}
+
+	CharacterStat->SetHP(100.f);
 }
 
 void AProject_MomoCharacter::SavePlayerData()

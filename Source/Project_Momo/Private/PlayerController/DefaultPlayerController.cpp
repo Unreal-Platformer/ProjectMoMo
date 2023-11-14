@@ -6,7 +6,7 @@
 
 ADefaultPlayerController::ADefaultPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<UHUDView> UI_HUD_C(TEXT("/Game/Widget/BP_HUDView.BP_HUDView"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD_C(TEXT("/Game/Widget/BP_HUDView.BP_HUDView_C"));
 	if (UI_HUD_C.Succeeded())
 		HUDViewClass = UI_HUD_C.Class;
 }
@@ -19,5 +19,6 @@ void ADefaultPlayerController::BeginPlay()
 	SetInputMode(InputMode);
 
 	HUDView = CreateWidget<UHUDView>(this, HUDViewClass);
-	HUDView->AddToViewport();
+	if(HUDView)
+		HUDView->AddToViewport();
 }

@@ -42,8 +42,8 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = Stat)
-	float MaxHP;
+	float MaxHP = 100.f;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
-	float CurrentHP;
+	float CurrentHP = 100.f;
 };
