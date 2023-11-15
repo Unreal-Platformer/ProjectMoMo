@@ -7,6 +7,7 @@
 #include "DefaultPlayerController.generated.h"
 
 class UHUDView;
+class UCrosshairWidget;
 
 /**
  * 
@@ -27,7 +28,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<UUserWidget> HUDViewClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<UUserWidget> CrosshairClass;
+
 private:
 	UPROPERTY()
 	UHUDView* HUDView;
+
+	UPROPERTY()
+	UCrosshairWidget* CrosshairWidget;
 };
