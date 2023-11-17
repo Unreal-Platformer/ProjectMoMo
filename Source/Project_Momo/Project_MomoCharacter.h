@@ -7,10 +7,12 @@
 #include "Logging/LogMacros.h"
 #include "Project_MomoCharacter.generated.h"
 
-class USpringArmComponent;
-class UCameraComponent;
-class UInputMappingContext;
 class UInputAction;
+class UCameraComponent;
+class USpringArmComponent;
+class UInputMappingContext;
+class UCharacterStatComponent;
+class ADefaultPlayerController;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -51,6 +53,9 @@ class AProject_MomoCharacter : public ACharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LoadAction;
+
+	UPROPERTY(VIsibleAnywhere, Category = Stat)
+	UCharacterStatComponent* CharacterStat;
 public:
 	AProject_MomoCharacter();
 	
@@ -80,5 +85,9 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+private:
+	UPROPERTY()
+	ADefaultPlayerController* DefaultPlayerController;
 };
 
