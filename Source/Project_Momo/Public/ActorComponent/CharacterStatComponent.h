@@ -41,11 +41,11 @@ public:
 	void UseTimePoint(float UsePoint);
 	void SetTimePoint(float NewTimePoint);
 	inline float GetMaxTimePoint() const { return MaxTimePoint; }
-	inline float GetCurrentTimePoint() const { return CurrentLifePoint; }
+	inline float GetCurrentTimePoint() const { return CurrentTimePoint; }
 	inline float GetTimePointRatio() const
 	{
 		// KINDA_SMALL_NUMBER = 언리얼에서 제공하는 매크로 엡실론
-		return (CurrentLifePoint < KINDA_SMALL_NUMBER ? 0.0f : (CurrentLifePoint / MaxLifePoint));
+		return (CurrentTimePoint < KINDA_SMALL_NUMBER ? 0.0f : (CurrentTimePoint / MaxTimePoint));
 	}
 
 	FOnLifePointIsZeroDelegate OnLifePointIsZero;

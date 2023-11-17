@@ -94,6 +94,9 @@ void AProject_MomoCharacter::SavePlayerData()
 	{
 		UE_LOG(LogClass, Warning, TEXT("SaveGame Error!"));
 	}
+	
+	CharacterStat->SetDamage(1.f);
+	CharacterStat->UseTimePoint(1.f);
 }
 
 void AProject_MomoCharacter::InitPlayerData()
@@ -105,6 +108,9 @@ void AProject_MomoCharacter::InitPlayerData()
 	}
 
 	SetActorLocation(MySaveGame->PlayerPos);
+
+	CharacterStat->SetLifePoint(CharacterStat->GetCurrentLifePoint() + 1.f);
+	CharacterStat->SetTimePoint(CharacterStat->GetCurrentTimePoint() + 1.f);
 }
 
 //////////////////////////////////////////////////////////////////////////

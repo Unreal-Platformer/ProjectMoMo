@@ -51,7 +51,7 @@ void UCharacterStatComponent::SetLifePoint(float NewLifePoint)
 
 void UCharacterStatComponent::UseTimePoint(float UsePoint)
 {
-	SetLifePoint(FMath::Clamp<float>(CurrentLifePoint - UsePoint, 0.0f, MaxLifePoint));
+	SetTimePoint(FMath::Clamp<float>(CurrentTimePoint - UsePoint, 0.0f, MaxTimePoint));
 }
 
 void UCharacterStatComponent::SetTimePoint(float NewTimePoint)
