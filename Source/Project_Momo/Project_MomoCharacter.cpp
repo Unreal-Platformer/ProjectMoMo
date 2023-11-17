@@ -119,7 +119,7 @@ void AProject_MomoCharacter::InitPlayerData()
 void AProject_MomoCharacter::LineTraceObject()
 {
 	FVector StartLoc = FollowCamera->GetComponentLocation(); // 레이저 시작 지점.
-	FVector EndLoc = StartLoc + (FollowCamera->GetForwardVector() * 5000.0f); // 레이저 끝나는 지점.
+	FVector EndLoc = StartLoc + (FollowCamera->GetForwardVector() * EffectiveRange); // 레이저 끝나는 지점.
 
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes; // 히트 가능한 오브젝트 유형들.

@@ -92,6 +92,10 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveActor)
+	float EffectiveRange = 5000.f;
+
 private:
 	AInteractiveActor* InteractiveActor = nullptr;
 
