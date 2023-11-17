@@ -81,7 +81,7 @@ void AProject_MomoCharacter::BeginPlay()
 		DefaultPlayerController->GetHUDView()->BindCharacterStat(CharacterStat);
 	}
 
-	CharacterStat->SetHP(100.f);
+	CharacterStat->SetLifePoint(100.f);
 }
 
 void AProject_MomoCharacter::SavePlayerData()

@@ -6,8 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "CharacterStatComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
-DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnLifePointIsZeroDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnLifePointChangedDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_MOMO_API UCharacterStatComponent : public UActorComponent
@@ -28,22 +28,22 @@ public:
 
 public:
 	void SetDamage(float NewDamage);
-	void SetHP(float NewHP);
-	inline float GetMaxHP() const { return MaxHP; }
-	inline float GetCurrentHP() const { return CurrentHP; }
-	inline float GetHPRatio() const
+	void SetLifePoint(float NewLifePoint);
+	inline float GetMaxLifePoint() const { return MaxLifePoint; }
+	inline float GetCurrentLifePoint() const { return CurrentLifePoint; }
+	inline float GetLifePointRatio() const
 	{
 		// KINDA_SMALL_NUMBER = 언리얼에서 제공하는 매크로 엡실론
-		return (CurrentHP < KINDA_SMALL_NUMBER ? 0.0f : (CurrentHP / MaxHP));
+		return (CurrentLifePoint < KINDA_SMALL_NUMBER ? 0.0f : (CurrentLifePoint / MaxLifePoint));
 	}
 
-	FOnHPIsZeroDelegate OnHPIsZero;
-	FOnHPChangedDelegate OnHPChanged;
+	FOnLifePointIsZeroDelegate OnLifePointIsZero;
+	FOnLifePointChangedDelegate OnLifePointChanged;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = Stat)
-	float MaxHP = 100.f;
+	float MaxLifePoint = 100.f;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
-	float CurrentHP = 100.f;
+	float CurrentLifePoint = 100.f;
 };

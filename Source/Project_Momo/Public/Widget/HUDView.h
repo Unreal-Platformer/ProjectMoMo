@@ -26,7 +26,7 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UProgressBar* HPProgressBar;
+	UProgressBar* LifePointProgressBar;
 
 private:
 	TWeakObjectPtr<class UCharacterStatComponent> CurrentCharacterStat;

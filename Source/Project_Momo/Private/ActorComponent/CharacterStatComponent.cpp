@@ -35,17 +35,17 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UCharacterStatComponent::SetDamage(float NewDamage)
 {
-	SetHP(FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, MaxHP));
+	SetLifePoint(FMath::Clamp<float>(CurrentLifePoint - NewDamage, 0.0f, MaxLifePoint));
 }
 
-void UCharacterStatComponent::SetHP(float NewHP)
+void UCharacterStatComponent::SetLifePoint(float NewLifePoint)
 {
-	CurrentHP = NewHP;
-	OnHPChanged.Broadcast();
-	if (CurrentHP < KINDA_SMALL_NUMBER)
+	CurrentLifePoint = NewLifePoint;
+	OnLifePointChanged.Broadcast();
+	if (CurrentLifePoint < KINDA_SMALL_NUMBER)
 	{
-		CurrentHP = 0.0f;
-		OnHPIsZero.Broadcast();
+		CurrentLifePoint = 0.0f;
+		OnLifePointIsZero.Broadcast();
 	}
 }
 
