@@ -82,6 +82,7 @@ void AProject_MomoCharacter::BeginPlay()
 	}
 
 	CharacterStat->SetLifePoint(100.f);
+	CharacterStat->SetTimePoint(100.f);
 }
 
 void AProject_MomoCharacter::SavePlayerData()

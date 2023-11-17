@@ -22,11 +22,15 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-	void UpdateCharacterStat();
+	void UpdateCharacterLifePoint();
+	void UpdateCharacterTimePoint();
 
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* LifePointProgressBar;
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UProgressBar* TimePointProgressBar;
 
 private:
 	TWeakObjectPtr<class UCharacterStatComponent> CurrentCharacterStat;

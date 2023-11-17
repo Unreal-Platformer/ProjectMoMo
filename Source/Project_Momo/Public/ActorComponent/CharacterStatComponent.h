@@ -8,6 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnLifePointIsZeroDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnLifePointChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnTimePointChangedDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_MOMO_API UCharacterStatComponent : public UActorComponent
@@ -37,8 +38,19 @@ public:
 		return (CurrentLifePoint < KINDA_SMALL_NUMBER ? 0.0f : (CurrentLifePoint / MaxLifePoint));
 	}
 
+	void UseTimePoint(float UsePoint);
+	void SetTimePoint(float NewTimePoint);
+	inline float GetMaxTimePoint() const { return MaxTimePoint; }
+	inline float GetCurrentTimePoint() const { return CurrentLifePoint; }
+	inline float GetTimePointRatio() const
+	{
+		// KINDA_SMALL_NUMBER = 언리얼에서 제공하는 매크로 엡실론
+		return (CurrentLifePoint < KINDA_SMALL_NUMBER ? 0.0f : (CurrentLifePoint / MaxLifePoint));
+	}
+
 	FOnLifePointIsZeroDelegate OnLifePointIsZero;
 	FOnLifePointChangedDelegate OnLifePointChanged;
+	FOnTimePointChangedDelegate	OnTimePointChanged;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = Stat)
@@ -46,4 +58,10 @@ protected:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float CurrentLifePoint = 100.f;
+
+	UPROPERTY(EditAnywhere, Category = Stat)
+	float MaxTimePoint = 100.f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
+	float CurrentTimePoint = 100.f;
 };

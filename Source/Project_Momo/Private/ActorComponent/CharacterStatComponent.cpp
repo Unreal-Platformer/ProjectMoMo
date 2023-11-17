@@ -49,3 +49,16 @@ void UCharacterStatComponent::SetLifePoint(float NewLifePoint)
 	}
 }
 
+void UCharacterStatComponent::UseTimePoint(float UsePoint)
+{
+	SetLifePoint(FMath::Clamp<float>(CurrentLifePoint - UsePoint, 0.0f, MaxLifePoint));
+}
+
+void UCharacterStatComponent::SetTimePoint(float NewTimePoint)
+{
+	CurrentTimePoint = NewTimePoint;
+	OnTimePointChanged.Broadcast();
+	if (CurrentTimePoint < KINDA_SMALL_NUMBER)
+		CurrentTimePoint = 0.0f;
+}
+

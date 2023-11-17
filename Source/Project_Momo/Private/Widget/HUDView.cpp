@@ -11,7 +11,8 @@ void UHUDView::BindCharacterStat(UCharacterStatComponent* NewCharacterStat)
 		return;
 
 	CurrentCharacterStat = NewCharacterStat;
-	NewCharacterStat->OnLifePointChanged.AddUObject(this, &UHUDView::UpdateCharacterStat);
+	NewCharacterStat->OnLifePointChanged.AddUObject(this, &UHUDView::UpdateCharacterLifePoint);
+	NewCharacterStat->OnTimePointChanged.AddUObject(this, &UHUDView::UpdateCharacterTimePoint);
 }
 
 void UHUDView::NativeConstruct()
@@ -19,7 +20,7 @@ void UHUDView::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UHUDView::UpdateCharacterStat()
+void UHUDView::UpdateCharacterLifePoint()
 {
 	if (CurrentCharacterStat->IsValidLowLevel())
 	{
@@ -27,3 +28,13 @@ void UHUDView::UpdateCharacterStat()
 			LifePointProgressBar->SetPercent(CurrentCharacterStat->GetLifePointRatio());
 	}
 }
+
+void UHUDView::UpdateCharacterTimePoint()
+{
+	if (CurrentCharacterStat->IsValidLowLevel())
+	{
+		if (nullptr != TimePointProgressBar)
+			TimePointProgressBar->SetPercent(CurrentCharacterStat->GetTimePointRatio());
+	}
+}
+
