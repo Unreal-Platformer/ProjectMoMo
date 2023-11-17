@@ -7,11 +7,15 @@
 #include "Logging/LogMacros.h"
 #include "Project_MomoCharacter.generated.h"
 
-class USpringArmComponent;
+class UInputAction;
 class UCameraComponent;
+class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
 class AInteractiveActor;
+class UCharacterStatComponent;
+class ADefaultPlayerController;
+
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -52,6 +56,9 @@ class AProject_MomoCharacter : public ACharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LoadAction;
+
+	UPROPERTY(VIsibleAnywhere, Category = Stat)
+	UCharacterStatComponent* CharacterStat;
 public:
 	AProject_MomoCharacter();
 	
@@ -87,5 +94,8 @@ public:
 
 private:
 	AInteractiveActor* InteractiveActor = nullptr;
+
+	UPROPERTY()
+	ADefaultPlayerController* DefaultPlayerController;
 };
 

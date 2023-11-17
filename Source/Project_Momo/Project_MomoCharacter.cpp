@@ -13,8 +13,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Item.h"
 #include "SlotData.h"
-#include "../Public/GameInstance/MomoGameInstance.h"
 #include "InteractiveActor.h"
+#include "GameInstance/MomoGameInstance.h"
+#include "ActorComponent/CharacterStatComponent.h"
+#include "PlayerController/DefaultPlayerController.h"
+#include "Widget/HUDView.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -59,6 +62,9 @@ AProject_MomoCharacter::AProject_MomoCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	CharacterStat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("CharacterStat"));
+
 }
 
 void AProject_MomoCharacter::BeginPlay()
@@ -67,13 +73,19 @@ void AProject_MomoCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	DefaultPlayerController = Cast<ADefaultPlayerController>(Controller);
+	if (DefaultPlayerController)
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(DefaultPlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		DefaultPlayerController->GetHUDView()->BindCharacterStat(CharacterStat);
 	}
+
+	CharacterStat->SetLifePoint(100.f);
+	CharacterStat->SetTimePoint(100.f);
 }
 
 void AProject_MomoCharacter::SavePlayerData()
@@ -85,6 +97,9 @@ void AProject_MomoCharacter::SavePlayerData()
 	{
 		UE_LOG(LogClass, Warning, TEXT("SaveGame Error!"));
 	}
+	
+	CharacterStat->SetDamage(1.f);
+	CharacterStat->UseTimePoint(1.f);
 }
 
 void AProject_MomoCharacter::InitPlayerData()
@@ -96,6 +111,9 @@ void AProject_MomoCharacter::InitPlayerData()
 	}
 
 	SetActorLocation(MySaveGame->PlayerPos);
+
+	CharacterStat->SetLifePoint(CharacterStat->GetCurrentLifePoint() + 1.f);
+	CharacterStat->SetTimePoint(CharacterStat->GetCurrentTimePoint() + 1.f);
 }
 
 void AProject_MomoCharacter::LineTraceObject()

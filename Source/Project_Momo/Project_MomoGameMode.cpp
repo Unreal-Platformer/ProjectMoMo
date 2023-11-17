@@ -3,6 +3,7 @@
 #include "Project_MomoGameMode.h"
 #include "Project_MomoCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "PlayerController/DefaultPlayerController.h"
 
 AProject_MomoGameMode::AProject_MomoGameMode()
 {
@@ -12,4 +13,6 @@ AProject_MomoGameMode::AProject_MomoGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	PlayerControllerClass = ADefaultPlayerController::StaticClass();
 }
