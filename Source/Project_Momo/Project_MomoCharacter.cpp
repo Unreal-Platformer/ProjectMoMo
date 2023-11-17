@@ -13,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Item.h"
 #include "SlotData.h"
+#include "InteractiveActor.h"
 #include "GameInstance/MomoGameInstance.h"
 #include "ActorComponent/CharacterStatComponent.h"
 #include "PlayerController/DefaultPlayerController.h"
@@ -25,6 +26,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AProject_MomoCharacter::AProject_MomoCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -113,6 +116,38 @@ void AProject_MomoCharacter::InitPlayerData()
 	CharacterStat->SetTimePoint(CharacterStat->GetCurrentTimePoint() + 1.f);
 }
 
+void AProject_MomoCharacter::LineTraceObject()
+{
+	FVector StartLoc = FollowCamera->GetComponentLocation(); // 레이저 시작 지점.
+	FVector EndLoc = StartLoc + (FollowCamera->GetForwardVector() * EffectiveRange); // 레이저 끝나는 지점.
+
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes; // 히트 가능한 오브젝트 유형들.
+	TEnumAsByte<EObjectTypeQuery> WorldStatic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody);
+	TEnumAsByte<EObjectTypeQuery> WorldDynamic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic);
+	ObjectTypes.Add(WorldStatic);
+	ObjectTypes.Add(WorldDynamic);
+
+	TArray<AActor*> IgnoreActors; // 무시할 액터들.
+
+	FHitResult HitResult; // 히트 결과 값 받을 변수.
+
+	bool Result = UKismetSystemLibrary::LineTraceSingleForObjects(
+		GetWorld(),
+		StartLoc,
+		EndLoc,
+		ObjectTypes,
+		false,
+		IgnoreActors,
+		EDrawDebugTrace::ForDuration,
+		HitResult,
+		true
+	);
+
+	if (Result == true)
+		InteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -141,6 +176,16 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AProject_MomoCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	LineTraceObject();
+
+	if (InteractiveActor)
+		UE_LOG(LogTemp, Log, TEXT("%s"), *(InteractiveActor->GetName()));
 }
 
 void AProject_MomoCharacter::Move(const FInputActionValue& Value)

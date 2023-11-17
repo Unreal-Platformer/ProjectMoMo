@@ -11,8 +11,11 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputMappingContext;
+class UInputAction;
+class AInteractiveActor;
 class UCharacterStatComponent;
 class ADefaultPlayerController;
+
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -61,6 +64,7 @@ public:
 	
 
 protected:
+	virtual void Tick(float DeltaSeconds);
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -76,9 +80,11 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+
 private:
 	void SavePlayerData();
 	void InitPlayerData();
+	void LineTraceObject();
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -86,7 +92,13 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveActor)
+	float EffectiveRange = 5000.f;
+
 private:
+	AInteractiveActor* InteractiveActor = nullptr;
+
 	UPROPERTY()
 	ADefaultPlayerController* DefaultPlayerController;
 };
