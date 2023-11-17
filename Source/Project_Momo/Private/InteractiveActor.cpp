@@ -8,14 +8,14 @@ AInteractiveActor::AInteractiveActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	CurrentAppliedSkill = EAppliedSkill::None;
 }
 
 // Called when the game starts or when spawned
 void AInteractiveActor::BeginPlay()
 {
 	Super::BeginPlay();
-	initActorPos = GetActorLocation();
+	InitActorPosition = GetActorLocation();
 }
 
 // Called every frame
@@ -29,39 +29,79 @@ void AInteractiveActor::ResetActorPosition()
 	UPrimitiveComponent* ActorRootComponent = GetComponentByClass<UPrimitiveComponent>();
 	ActorRootComponent->SetPhysicsLinearVelocity(FVector(0, 0, 0));
 	ActorRootComponent->SetPhysicsAngularVelocityInRadians(FVector(0, 0, 0));
-	SetActorLocation(initActorPos);
+	SetActorLocation(InitActorPosition);
 }
 
-void AInteractiveActor::RewindActorPosition()
+void AInteractiveActor::ApplySkill(EAppliedSkill ApplySkillType)
 {
+	if (CurrentAppliedSkill != EAppliedSkill::None)
+		return;
+	
 	UPrimitiveComponent* ActorRootComponent = GetComponentByClass<UPrimitiveComponent>();
-	const FVector ActorCurrentLinearVelocity = ActorRootComponent->GetPhysicsLinearVelocity();
-	const FVector ActorCurrentAngularVelocity = ActorRootComponent->GetPhysicsAngularVelocityInRadians();
-	ActorRootComponent->SetPhysicsLinearVelocity(-ActorCurrentLinearVelocity);
-	ActorRootComponent->SetPhysicsAngularVelocityInRadians(-ActorCurrentAngularVelocity);
+	CurrentActorLinearVelocity = ActorRootComponent->GetPhysicsLinearVelocity();
+	CurrentActorAngularVelocity = ActorRootComponent->GetPhysicsAngularVelocityInRadians();
+	GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor(255,255,0), CurrentActorLinearVelocity.ToString());
+	GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor(255,255,0), CurrentActorAngularVelocity.ToString());
+	
+	switch (ApplySkillType)
+	{
+		case EAppliedSkill::Rewind:
+			ActorRootComponent->SetPhysicsLinearVelocity(-CurrentActorLinearVelocity);
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(-CurrentActorAngularVelocity);
+			break;
+		case EAppliedSkill::Quicken:
+			ActorRootComponent->SetPhysicsLinearVelocity(2 * CurrentActorLinearVelocity);
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(2 * CurrentActorAngularVelocity);
+			break;
+		case EAppliedSkill::Slow:
+			ActorRootComponent->SetPhysicsLinearVelocity(0.5f * CurrentActorLinearVelocity);
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(0.5f * CurrentActorAngularVelocity);
+			break;
+		case EAppliedSkill::Stop:
+			ActorRootComponent->SetSimulatePhysics(false);
+			ActorRootComponent->SetPhysicsLinearVelocity(FVector(0, 0, 0));
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(FVector(0, 0, 0));
+			break;
+		default:
+			UE_LOG(LogTemp, Fatal, TEXT("%s: Incorrect ApplySkillType."), *GetName());
+			return;
+	}
+	CurrentAppliedSkill = ApplySkillType;
 }
 
-void AInteractiveActor::SlowActorMovement()
+void AInteractiveActor::CancelAppliedSkill()
 {
 	UPrimitiveComponent* ActorRootComponent = GetComponentByClass<UPrimitiveComponent>();
-	const FVector ActorCurrentLinearVelocity = ActorRootComponent->GetPhysicsLinearVelocity();
-	const FVector ActorCurrentAngularVelocity = ActorRootComponent->GetPhysicsAngularVelocityInRadians();
-	ActorRootComponent->SetPhysicsLinearVelocity(0.5f * ActorCurrentLinearVelocity);
-	ActorRootComponent->SetPhysicsAngularVelocityInRadians(0.5f * ActorCurrentAngularVelocity);
+	if(CurrentAppliedSkill != EAppliedSkill::Stop)
+	{
+		CurrentActorLinearVelocity = ActorRootComponent->GetPhysicsLinearVelocity();
+		CurrentActorAngularVelocity = ActorRootComponent->GetPhysicsAngularVelocityInRadians();
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor(255,255,255), CurrentActorLinearVelocity.ToString());
+	GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor(255,255,255), CurrentActorAngularVelocity.ToString());
+
+	switch (CurrentAppliedSkill)
+	{
+		case EAppliedSkill::Rewind:
+			ActorRootComponent->SetPhysicsLinearVelocity(-CurrentActorLinearVelocity);
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(-CurrentActorAngularVelocity);
+			break;
+		case EAppliedSkill::Quicken:
+			ActorRootComponent->SetPhysicsLinearVelocity(0.5f * CurrentActorLinearVelocity);
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(0.5f * CurrentActorAngularVelocity);
+			break;
+		case EAppliedSkill::Slow:
+			ActorRootComponent->SetPhysicsLinearVelocity(2 * CurrentActorLinearVelocity);
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(2 * CurrentActorAngularVelocity);
+			break;
+	case EAppliedSkill::Stop:
+			ActorRootComponent->SetSimulatePhysics(true);
+			ActorRootComponent->SetPhysicsLinearVelocity(CurrentActorLinearVelocity);
+			ActorRootComponent->SetPhysicsAngularVelocityInRadians(CurrentActorAngularVelocity);
+			break;
+		default:
+			return;
+	}
+	CurrentAppliedSkill = EAppliedSkill::None;
 }
 
-void AInteractiveActor::QuickenActorMovement()
-{
-	UPrimitiveComponent* ActorRootComponent = GetComponentByClass<UPrimitiveComponent>();
-	const FVector ActorCurrentLinearVelocity = ActorRootComponent->GetPhysicsLinearVelocity();
-	const FVector ActorCurrentAngularVelocity = ActorRootComponent->GetPhysicsAngularVelocityInRadians();
-	ActorRootComponent->SetPhysicsLinearVelocity(2 * ActorCurrentLinearVelocity);
-	ActorRootComponent->SetPhysicsAngularVelocityInRadians(2 * ActorCurrentAngularVelocity);
-}
-
-void AInteractiveActor::StopActorMovement()
-{
-	UPrimitiveComponent* ActorRootComponent = GetComponentByClass<UPrimitiveComponent>();
-	ActorRootComponent->SetPhysicsLinearVelocity(FVector(0, 0, 0));
-	ActorRootComponent->SetPhysicsAngularVelocityInRadians(FVector(0, 0, 0));
-}

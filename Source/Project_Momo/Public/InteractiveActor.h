@@ -6,6 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "InteractiveActor.generated.h"
 
+UENUM()
+enum class EAppliedSkill : uint8
+{
+	None,
+	Rewind,
+	Quicken,
+	Slow,
+	Stop
+};
+
 UCLASS()
 class PROJECT_MOMO_API AInteractiveActor : public AActor
 {
@@ -27,20 +37,23 @@ public:
 	void ResetActorPosition();
 
 	UFUNCTION()
-	void RewindActorPosition();
+	void ApplySkill(EAppliedSkill ApplySkillType);
 	
 	UFUNCTION()
-	void SlowActorMovement();
+	void CancelAppliedSkill();
 
 	UFUNCTION()
-	void QuickenActorMovement();
+	void ColideAction();
+	
+	UPROPERTY()
+	FVector CurrentActorLinearVelocity;
 
-	UFUNCTION()
-	void StopActorMovement();
+	UPROPERTY()
+	FVector CurrentActorAngularVelocity;
 	
 	UPROPERTY()
-	FVector actorPos;
-	
+	FVector InitActorPosition;
+
 	UPROPERTY()
-	FVector initActorPos;
+	EAppliedSkill CurrentAppliedSkill;
 };

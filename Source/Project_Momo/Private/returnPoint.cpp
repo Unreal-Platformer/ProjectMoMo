@@ -43,7 +43,7 @@ void AreturnPoint::ReturnPointBeginOverlap(UPrimitiveComponent* OverlappenCompon
 	AInteractiveActor* InteractiveActor = Cast<AInteractiveActor, AActor>(OtherActor);
 	if(IsValid(InteractiveActor))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor(255,255,0), InteractiveActor->initActorPos.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor(255,255,0), InteractiveActor->InitActorPosition.ToString());
 		InteractiveActor->ResetActorPosition();
 	}
 }

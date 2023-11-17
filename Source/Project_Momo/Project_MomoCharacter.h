@@ -69,6 +69,9 @@ class AProject_MomoCharacter : public ACharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* StopObject;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* CancelSkillKey;
 public:
 	AProject_MomoCharacter();
 	
@@ -98,6 +101,7 @@ private:
 	void SlowInteractiveActor();
 	void QuickenInteractiveActor();
 	void StopInteractiveActor();
+	void CancelSkill();
 
 public:
 	/** Returns CameraBoom subobject **/

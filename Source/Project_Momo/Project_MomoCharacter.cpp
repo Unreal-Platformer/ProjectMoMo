@@ -99,22 +99,27 @@ void AProject_MomoCharacter::InitPlayerData()
 
 void AProject_MomoCharacter::RewindInteractiveActor()
 {
-	testingInteractiveActor->RewindActorPosition();
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Rewind);
 }
 
 void AProject_MomoCharacter::SlowInteractiveActor()
 {
-	testingInteractiveActor->SlowActorMovement();
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Slow);
 }
 
 void AProject_MomoCharacter::QuickenInteractiveActor()
 {
-	testingInteractiveActor->QuickenActorMovement();
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Quicken);
 }
 
 void AProject_MomoCharacter::StopInteractiveActor()
 {
-	testingInteractiveActor->StopActorMovement();
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Stop);
+}
+
+void AProject_MomoCharacter::CancelSkill()
+{
+	testingInteractiveActor->CancelAppliedSkill();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,6 +157,9 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		// Stop
 		EnhancedInputComponent->BindAction(StopObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::StopInteractiveActor);
+
+		// Cancel
+		EnhancedInputComponent->BindAction(CancelSkillKey, ETriggerEvent::Started, this, &AProject_MomoCharacter::CancelSkill);
 	}
 	else
 	{
