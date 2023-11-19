@@ -43,8 +43,8 @@ public:
 	void CancelAppliedSkill();
 
 	UFUNCTION()
-	void ColideAction();
-	
+	void HandleCollision();
+
 	UPROPERTY()
 	FVector CurrentActorLinearVelocity;
 
