@@ -18,6 +18,7 @@
 #include "ActorComponent/CharacterStatComponent.h"
 #include "PlayerController/DefaultPlayerController.h"
 #include "Widget/HUDView.h"
+#include "Widget/CrosshairWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -146,6 +147,13 @@ void AProject_MomoCharacter::LineTraceObject()
 
 	if (Result == true)
 		InteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
+	else
+		InteractiveActor = nullptr;
+
+	if (InteractiveActor)
+		UE_LOG(LogTemp, Log, TEXT("%s"), *(InteractiveActor->GetName()));
+
+	DefaultPlayerController->GetCrosshairWidget()->SetPicking(InteractiveActor != nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,9 +191,6 @@ void AProject_MomoCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	LineTraceObject();
-
-	if (InteractiveActor)
-		UE_LOG(LogTemp, Log, TEXT("%s"), *(InteractiveActor->GetName()));
 }
 
 void AProject_MomoCharacter::Move(const FInputActionValue& Value)
