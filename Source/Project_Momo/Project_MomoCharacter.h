@@ -102,7 +102,8 @@ protected:
 private:
 	void SavePlayerData();
 	void InitPlayerData();
-
+	void LineTraceObject();
+	
 	// 테스트용 기능. 추후 변경 혹은 제거
 	void RewindInteractiveActor();
 	void SlowInteractiveActor();
