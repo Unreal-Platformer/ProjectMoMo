@@ -10,12 +10,14 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "InteractiveActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Item.h"
 #include "SlotData.h"
-#include "../Public/GameInstance/MomoGameInstance.h"
 #include "InteractiveActor.h"
+#include "GameInstance/MomoGameInstance.h"
+#include "ActorComponent/CharacterStatComponent.h"
+#include "PlayerController/DefaultPlayerController.h"
+#include "Widget/HUDView.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -24,6 +26,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AProject_MomoCharacter::AProject_MomoCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -58,21 +62,30 @@ AProject_MomoCharacter::AProject_MomoCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	CharacterStat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("CharacterStat"));
+
 }
 
 void AProject_MomoCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-	
+
 	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	DefaultPlayerController = Cast<ADefaultPlayerController>(Controller);
+	if (DefaultPlayerController)
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(DefaultPlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		DefaultPlayerController->GetHUDView()->BindCharacterStat(CharacterStat);
 	}
+
+	CharacterStat->SetLifePoint(100.f);
+	CharacterStat->SetTimePoint(100.f);
 }
 
 void AProject_MomoCharacter::SavePlayerData()
@@ -84,6 +97,9 @@ void AProject_MomoCharacter::SavePlayerData()
 	{
 		UE_LOG(LogClass, Warning, TEXT("SaveGame Error!"));
 	}
+	
+	CharacterStat->SetDamage(1.f);
+	CharacterStat->UseTimePoint(1.f);
 }
 
 void AProject_MomoCharacter::InitPlayerData()
@@ -95,6 +111,41 @@ void AProject_MomoCharacter::InitPlayerData()
 	}
 
 	SetActorLocation(MySaveGame->PlayerPos);
+
+	CharacterStat->SetLifePoint(CharacterStat->GetCurrentLifePoint() + 1.f);
+	CharacterStat->SetTimePoint(CharacterStat->GetCurrentTimePoint() + 1.f);
+}
+
+void AProject_MomoCharacter::LineTraceObject()
+{
+	FVector StartLoc = FollowCamera->GetComponentLocation(); // 레이저 시작 지점.
+	FVector EndLoc = StartLoc + (FollowCamera->GetForwardVector() * EffectiveRange); // 레이저 끝나는 지점.
+
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes; // 히트 가능한 오브젝트 유형들.
+	TEnumAsByte<EObjectTypeQuery> WorldStatic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody);
+	TEnumAsByte<EObjectTypeQuery> WorldDynamic = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic);
+	ObjectTypes.Add(WorldStatic);
+	ObjectTypes.Add(WorldDynamic);
+
+	TArray<AActor*> IgnoreActors; // 무시할 액터들.
+
+	FHitResult HitResult; // 히트 결과 값 받을 변수.
+
+	bool Result = UKismetSystemLibrary::LineTraceSingleForObjects(
+		GetWorld(),
+		StartLoc,
+		EndLoc,
+		ObjectTypes,
+		false,
+		IgnoreActors,
+		EDrawDebugTrace::ForDuration,
+		HitResult,
+		true
+	);
+
+	if (Result == true)
+		InteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
 }
 
 void AProject_MomoCharacter::RewindInteractiveActor()
@@ -165,6 +216,16 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AProject_MomoCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	LineTraceObject();
+
+	if (InteractiveActor)
+		UE_LOG(LogTemp, Log, TEXT("%s"), *(InteractiveActor->GetName()));
 }
 
 void AProject_MomoCharacter::Move(const FInputActionValue& Value)

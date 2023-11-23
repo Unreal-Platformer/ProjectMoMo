@@ -7,12 +7,15 @@
 #include "Logging/LogMacros.h"
 #include "Project_MomoCharacter.generated.h"
 
-
-class AInteractiveActor;
-class USpringArmComponent;
+class UInputAction;
 class UCameraComponent;
+class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
+class AInteractiveActor;
+class UCharacterStatComponent;
+class ADefaultPlayerController;
+
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -72,11 +75,15 @@ class AProject_MomoCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* CancelSkillKey;
+
+	UPROPERTY(VIsibleAnywhere, Category = Stat)
+	UCharacterStatComponent* CharacterStat;
 public:
 	AProject_MomoCharacter();
 	
 
 protected:
+	virtual void Tick(float DeltaSeconds);
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -112,5 +119,15 @@ public:
 	// 테스트용으로 한 개의 액터만 지정해서 조정 가능하도록 만듦 기능 테스트 완료 후 제거
 	UPROPERTY(EditAnywhere)
 	TSoftObjectPtr<AInteractiveActor> testingInteractiveActor;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveActor)
+	float EffectiveRange = 5000.f;
+
+private:
+	AInteractiveActor* InteractiveActor = nullptr;
+
+	UPROPERTY()
+	ADefaultPlayerController* DefaultPlayerController;
 };
 
