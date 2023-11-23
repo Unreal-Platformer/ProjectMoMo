@@ -37,14 +37,20 @@ public:
 	void ResetActorPosition();
 
 	UFUNCTION()
+	void ReversingActorPosition();
+
+	UFUNCTION()
 	void ApplySkill(EAppliedSkill ApplySkillType);
 	
 	UFUNCTION()
 	void CancelAppliedSkill();
 
 	UFUNCTION()
-	void HandleCollision();
+	void HandleCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
+	UPROPERTY()
+	UStaticMeshComponent* ActorStaticMeshComponent;
+	
 	UPROPERTY()
 	FVector CurrentActorLinearVelocity;
 
@@ -56,4 +62,11 @@ public:
 
 	UPROPERTY()
 	EAppliedSkill CurrentAppliedSkill;
+
+	UPROPERTY()
+	TArray<FVector> PositionHistory;
+
+	UPROPERTY()
+	TArray<FRotator> RotationHistory;
+	
 };
