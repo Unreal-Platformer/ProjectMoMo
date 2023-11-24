@@ -148,6 +148,31 @@ void AProject_MomoCharacter::LineTraceObject()
 		InteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
 }
 
+void AProject_MomoCharacter::RewindInteractiveActor()
+{
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Rewind);
+}
+
+void AProject_MomoCharacter::SlowInteractiveActor()
+{
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Slow);
+}
+
+void AProject_MomoCharacter::QuickenInteractiveActor()
+{
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Quicken);
+}
+
+void AProject_MomoCharacter::StopInteractiveActor()
+{
+	testingInteractiveActor->ApplySkill(EAppliedSkill::Stop);
+}
+
+void AProject_MomoCharacter::CancelSkill()
+{
+	testingInteractiveActor->CancelAppliedSkill();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -171,6 +196,21 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		// Load
 		EnhancedInputComponent->BindAction(LoadAction, ETriggerEvent::Started, this, &AProject_MomoCharacter::InitPlayerData);
+
+		// Rewind
+		EnhancedInputComponent->BindAction(RewindObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::RewindInteractiveActor);
+
+		// Slow
+		EnhancedInputComponent->BindAction(SlowObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::SlowInteractiveActor);
+
+		// Quicken
+		EnhancedInputComponent->BindAction(QuickenObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::QuickenInteractiveActor);
+
+		// Stop
+		EnhancedInputComponent->BindAction(StopObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::StopInteractiveActor);
+
+		// Cancel
+		EnhancedInputComponent->BindAction(CancelSkillKey, ETriggerEvent::Started, this, &AProject_MomoCharacter::CancelSkill);
 	}
 	else
 	{
