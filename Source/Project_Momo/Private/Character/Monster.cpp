@@ -17,6 +17,13 @@ AMonster::AMonster()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+
+	CharacterStat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("CharacterStat"));
+
+	if (CharacterStat)
+	{
+		CharacterStat->OnLifePointIsZero.AddUObject(this, &AMonster::Die);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -38,5 +45,9 @@ void AMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AMonster::Die()
+{
 }
 

@@ -24,6 +24,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
+	void Die();
+
+protected:
 	UPROPERTY(VIsibleAnywhere, Category = Stat)
 	UCharacterStatComponent* CharacterStat;
 };
