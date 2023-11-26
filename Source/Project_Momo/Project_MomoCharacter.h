@@ -126,7 +126,7 @@ protected:
 	float EffectiveRange = 5000.f;
 
 private:
-	AInteractiveActor* InteractiveActor = nullptr;
+	TWeakObjectPtr<AInteractiveActor> TargetInteractiveActor = nullptr;
 
 	UPROPERTY()
 	ADefaultPlayerController* DefaultPlayerController;

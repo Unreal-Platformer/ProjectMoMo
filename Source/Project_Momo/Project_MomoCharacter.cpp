@@ -139,38 +139,49 @@ void AProject_MomoCharacter::LineTraceObject()
 		ObjectTypes,
 		false,
 		IgnoreActors,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::Type::None,
 		HitResult,
 		true
 	);
 
 	if (Result == true)
-		InteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
+	{
+		TargetInteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
+	}
+	else
+	{
+		TargetInteractiveActor = nullptr;		
+	}
 }
 
 void AProject_MomoCharacter::RewindInteractiveActor()
 {
-	testingInteractiveActor->ApplySkill(EAppliedSkill::Rewind);
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Rewind);
 }
 
 void AProject_MomoCharacter::SlowInteractiveActor()
 {
-	testingInteractiveActor->ApplySkill(EAppliedSkill::Slow);
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Slow);
 }
 
 void AProject_MomoCharacter::QuickenInteractiveActor()
 {
-	testingInteractiveActor->ApplySkill(EAppliedSkill::Quicken);
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Quicken);
 }
 
 void AProject_MomoCharacter::StopInteractiveActor()
 {
-	testingInteractiveActor->ApplySkill(EAppliedSkill::Stop);
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Stop);
 }
 
 void AProject_MomoCharacter::CancelSkill()
 {
-	testingInteractiveActor->CancelAppliedSkill();
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->CancelAppliedSkill();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -224,8 +235,14 @@ void AProject_MomoCharacter::Tick(float DeltaSeconds)
 
 	LineTraceObject();
 
-	if (InteractiveActor)
-		UE_LOG(LogTemp, Log, TEXT("%s"), *(InteractiveActor->GetName()));
+	if (TargetInteractiveActor.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("%s"), *(TargetInteractiveActor->GetName()));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("none"));
+	}
 }
 
 void AProject_MomoCharacter::Move(const FInputActionValue& Value)
