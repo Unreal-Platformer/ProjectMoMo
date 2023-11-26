@@ -117,10 +117,6 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	// 테스트용으로 한 개의 액터만 지정해서 조정 가능하도록 만듦 기능 테스트 완료 후 제거
-	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<AInteractiveActor> testingInteractiveActor;
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveActor)
 	float EffectiveRange = 5000.f;

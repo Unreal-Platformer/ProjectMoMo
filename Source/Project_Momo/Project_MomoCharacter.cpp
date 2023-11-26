@@ -234,15 +234,6 @@ void AProject_MomoCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	LineTraceObject();
-
-	if (TargetInteractiveActor.IsValid())
-	{
-		UE_LOG(LogTemp, Log, TEXT("%s"), *(TargetInteractiveActor->GetName()));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("none"));
-	}
 }
 
 void AProject_MomoCharacter::Move(const FInputActionValue& Value)
