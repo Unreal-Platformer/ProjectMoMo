@@ -7,6 +7,7 @@
 #include "Monster.generated.h"
 
 class UCharacterStatComponent;
+class UAnimMontage;
 
 UCLASS()
 class PROJECT_MOMO_API AMonster : public ACharacter
@@ -29,4 +30,7 @@ protected:
 protected:
 	UPROPERTY(VIsibleAnywhere, Category = Stat)
 	UCharacterStatComponent* CharacterStat;
+
+	UPROPERTY(VIsibleAnywhere, Category = Montage)
+	UAnimMontage* DeathMontage;
 };
