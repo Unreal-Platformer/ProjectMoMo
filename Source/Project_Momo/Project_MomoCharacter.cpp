@@ -154,7 +154,7 @@ void AProject_MomoCharacter::LineTraceObject()
 		TargetInteractiveActor = nullptr;		
 	}
 
-	DefaultPlayerController->GetCrosshairWidget()->SetPicking(InteractiveActor != nullptr);
+	DefaultPlayerController->GetCrosshairWidget()->SetPicking(TargetInteractiveActor != nullptr);
 }
 
 void AProject_MomoCharacter::RewindInteractiveActor()

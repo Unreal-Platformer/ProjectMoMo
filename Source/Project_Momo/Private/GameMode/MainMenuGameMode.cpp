@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "GameMode/MainMenuGameMode.h"
 #include "Widget/MainMenu.h"
 #include "Blueprint/UserWidget.h"
-#include "GameMode/MainMenuGameMode.h"
 
 
 AMainMenuGameMode::AMainMenuGameMode()
