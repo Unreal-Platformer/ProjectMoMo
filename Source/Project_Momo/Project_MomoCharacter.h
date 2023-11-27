@@ -57,6 +57,25 @@ class AProject_MomoCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LoadAction;
 
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* RewindObject;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SlowObject;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* QuickenObject;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* StopObject;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* CancelSkillKey;
+
 	UPROPERTY(VIsibleAnywhere, Category = Stat)
 	UCharacterStatComponent* CharacterStat;
 public:
@@ -80,11 +99,17 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
-
 private:
 	void SavePlayerData();
 	void InitPlayerData();
 	void LineTraceObject();
+	
+	// 테스트용 기능. 추후 변경 혹은 제거
+	void RewindInteractiveActor();
+	void SlowInteractiveActor();
+	void QuickenInteractiveActor();
+	void StopInteractiveActor();
+	void CancelSkill();
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -97,7 +122,7 @@ protected:
 	float EffectiveRange = 5000.f;
 
 private:
-	AInteractiveActor* InteractiveActor = nullptr;
+	TWeakObjectPtr<AInteractiveActor> TargetInteractiveActor = nullptr;
 
 	UPROPERTY()
 	ADefaultPlayerController* DefaultPlayerController;
