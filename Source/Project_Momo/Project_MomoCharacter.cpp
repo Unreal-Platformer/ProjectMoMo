@@ -140,20 +140,51 @@ void AProject_MomoCharacter::LineTraceObject()
 		ObjectTypes,
 		false,
 		IgnoreActors,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::Type::None,
 		HitResult,
 		true
 	);
 
 	if (Result == true)
-		InteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
+	{
+		TargetInteractiveActor = Cast<AInteractiveActor>(HitResult.GetActor());
+	}
 	else
-		InteractiveActor = nullptr;
-
-	if (InteractiveActor)
-		UE_LOG(LogTemp, Log, TEXT("%s"), *(InteractiveActor->GetName()));
+	{
+		TargetInteractiveActor = nullptr;		
+	}
 
 	DefaultPlayerController->GetCrosshairWidget()->SetPicking(InteractiveActor != nullptr);
+}
+
+void AProject_MomoCharacter::RewindInteractiveActor()
+{
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Rewind);
+}
+
+void AProject_MomoCharacter::SlowInteractiveActor()
+{
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Slow);
+}
+
+void AProject_MomoCharacter::QuickenInteractiveActor()
+{
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Quicken);
+}
+
+void AProject_MomoCharacter::StopInteractiveActor()
+{
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->ApplySkill(EAppliedSkill::Stop);
+}
+
+void AProject_MomoCharacter::CancelSkill()
+{
+	if(TargetInteractiveActor.IsValid())
+		TargetInteractiveActor->CancelAppliedSkill();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,6 +210,21 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		// Load
 		EnhancedInputComponent->BindAction(LoadAction, ETriggerEvent::Started, this, &AProject_MomoCharacter::InitPlayerData);
+
+		// Rewind
+		EnhancedInputComponent->BindAction(RewindObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::RewindInteractiveActor);
+
+		// Slow
+		EnhancedInputComponent->BindAction(SlowObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::SlowInteractiveActor);
+
+		// Quicken
+		EnhancedInputComponent->BindAction(QuickenObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::QuickenInteractiveActor);
+
+		// Stop
+		EnhancedInputComponent->BindAction(StopObject, ETriggerEvent::Started, this, &AProject_MomoCharacter::StopInteractiveActor);
+
+		// Cancel
+		EnhancedInputComponent->BindAction(CancelSkillKey, ETriggerEvent::Started, this, &AProject_MomoCharacter::CancelSkill);
 	}
 	else
 	{
