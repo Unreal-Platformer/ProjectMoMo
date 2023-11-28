@@ -21,6 +21,7 @@ public:
 	ADefaultPlayerController();
 
 	inline UHUDView* GetHUDView() const { return HUDView; };
+	inline UCrosshairWidget* GetCrosshairWidget() const { return CrosshairWidget; };
 
 protected:
 	virtual void BeginPlay() override;

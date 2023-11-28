@@ -18,6 +18,7 @@
 #include "ActorComponent/CharacterStatComponent.h"
 #include "PlayerController/DefaultPlayerController.h"
 #include "Widget/HUDView.h"
+#include "Widget/CrosshairWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -152,6 +153,8 @@ void AProject_MomoCharacter::LineTraceObject()
 	{
 		TargetInteractiveActor = nullptr;		
 	}
+
+	DefaultPlayerController->GetCrosshairWidget()->SetPicking(TargetInteractiveActor != nullptr);
 }
 
 void AProject_MomoCharacter::RewindInteractiveActor()
