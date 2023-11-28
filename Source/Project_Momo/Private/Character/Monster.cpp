@@ -62,15 +62,19 @@ void AMonster::Die()
 		{
 		case 0:
 			SectionName = FName("DeathRight");
+			DeathPose = EDeathPose::EDP_DeathRight;
 			break;
 		case 1:
 			SectionName = FName("DeathLeft");
+			DeathPose = EDeathPose::EDP_DeathLeft;
 			break;
 		case 2:
 			SectionName = FName("DeathForward");
+			DeathPose = EDeathPose::EDP_DeathFront;
 			break;
 		case 3:
 			SectionName = FName("DeathBackward");
+			DeathPose = EDeathPose::EDP_DeathBack;
 			break;
 		default:
 			break;
@@ -78,5 +82,8 @@ void AMonster::Die()
 
 		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
 	}
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetLifeSpan(3.f);
 }
 

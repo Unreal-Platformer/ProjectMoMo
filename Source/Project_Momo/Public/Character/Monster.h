@@ -9,10 +9,22 @@
 class UCharacterStatComponent;
 class UAnimMontage;
 
+UENUM(BlueprintType)
+enum class EDeathPose : uint8
+{
+	EDP_Alive UMETA(DisplayName = "Alive"),
+	EDP_DeathFront UMETA(DisplayName = "DeathFront"),
+	EDP_DeathBack UMETA(DisplayName = "DeathBack"),
+	EDP_DeathRight UMETA(DisplayName = "DeathRight"),
+	EDP_DeathLeft UMETA(DisplayName = "DeathLeft"),
+};
+
 UCLASS()
 class PROJECT_MOMO_API AMonster : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
 
 public:
 	AMonster();
@@ -33,4 +45,7 @@ protected:
 
 	UPROPERTY(VIsibleAnywhere, Category = Montage)
 	UAnimMontage* DeathMontage;
+
+	UPROPERTY(BlueprintReadOnly)
+	EDeathPose DeathPose = EDeathPose::EDP_Alive;
 };
