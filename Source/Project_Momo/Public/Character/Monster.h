@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(VIsibleAnywhere, Category = Montage)
 	UAnimMontage* DeathMontage;
 
+	UPROPERTY()
+	AActor* CombatTarget;
+
 	UPROPERTY(BlueprintReadOnly)
 	EDeathPose DeathPose = EDeathPose::EDP_Alive;
 };
