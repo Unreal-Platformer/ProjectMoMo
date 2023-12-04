@@ -5,6 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "ActorComponent/CharacterStatComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 
@@ -26,6 +27,11 @@ AMonster::AMonster()
 	{
 		CharacterStat->OnLifePointIsZero.AddUObject(this, &AMonster::Die);
 	}
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 }
 
 // Called when the game starts or when spawned
