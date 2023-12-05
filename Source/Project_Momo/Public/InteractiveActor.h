@@ -68,5 +68,4 @@ public:
 
 	UPROPERTY()
 	TArray<FRotator> RotationHistory;
-	
 };
