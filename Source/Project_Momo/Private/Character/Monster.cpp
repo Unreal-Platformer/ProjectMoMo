@@ -8,6 +8,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "AI/Navigation/NavigationTypes.h"
+#include "Navigation/PathFollowingComponent.h"
+#include "NavigationData.h"
+#include "AIController.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -39,6 +43,10 @@ void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	MonsterController = Cast<AAIController>(GetController());
+	//MoveToTarget(CurrentPatrolTarget);
+
+	GetWorldTimerManager().SetTimer(PatrolTimer, this, &AMonster::PatrolTimerFinished, 5.f);
 }
 
 // Called every frame
@@ -46,6 +54,17 @@ void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CheckPatrolTarget();
+}
+
+void AMonster::CheckPatrolTarget()
+{
+	if (MonsterController && InTargetRange(CurrentPatrolTarget, PatrolRadius))
+	{
+		CurrentPatrolTarget = ChoosePatrolTarget();
+		const float WaitTime = FMath::RandRange(WaitMin, WaitMax);
+		GetWorldTimerManager().SetTimer(PatrolTimer, this, &AMonster::PatrolTimerFinished, WaitTime);
+	}
 }
 
 // Called to bind functionality to input
@@ -91,5 +110,49 @@ void AMonster::Die()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetLifeSpan(3.f);
+}
+
+bool AMonster::InTargetRange(AActor* Target, const double Radius) const
+{
+	if (Target == nullptr)
+		return false;
+
+	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
+	return Radius >= DistanceToTarget;
+}
+
+void AMonster::MoveToTarget(AActor* Target)
+{
+	if (MonsterController == nullptr || Target == nullptr)
+		return;
+
+	FAIMoveRequest MoveRequest;
+	MoveRequest.SetGoalActor(Target);
+	MoveRequest.SetAcceptanceRadius(15.f);
+	MonsterController->MoveTo(MoveRequest);
+}
+
+AActor* AMonster::ChoosePatrolTarget()
+{
+	TArray<AActor*> ValidTargets;
+	for (AActor* Target : PatrolTargets)
+	{
+		if (Target != CurrentPatrolTarget)
+			ValidTargets.AddUnique(Target);
+	}
+
+	const int32 NumPatrolTargets = ValidTargets.Num();
+	if (0 < NumPatrolTargets)
+	{
+		const int32 TargetSelection = FMath::RandRange(0, NumPatrolTargets - 1);
+		return ValidTargets[TargetSelection];
+	}
+
+	return nullptr;
+}
+
+void AMonster::PatrolTimerFinished()
+{
+	MoveToTarget(CurrentPatrolTarget);
 }
 

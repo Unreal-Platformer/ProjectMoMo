@@ -8,6 +8,7 @@
 
 class UCharacterStatComponent;
 class UAnimMontage;
+class AAIController;
 
 UENUM(BlueprintType)
 enum class EDeathPose : uint8
@@ -38,6 +39,11 @@ public:
 
 protected:
 	void Die();
+	bool InTargetRange(AActor* Target, const double Radius) const;
+	void MoveToTarget(AActor* Target);
+	AActor* ChoosePatrolTarget();
+	void PatrolTimerFinished();
+	void CheckPatrolTarget();
 
 protected:
 	UPROPERTY(VIsibleAnywhere, Category = Stat)
@@ -47,8 +53,28 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	UPROPERTY()
+	AAIController* MonsterController;
+
+	UPROPERTY()
 	AActor* CombatTarget;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	AActor* CurrentPatrolTarget;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	TArray<AActor*> PatrolTargets;
+
+	UPROPERTY(EditAnywhere)
+	double PatrolRadius = 200.f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Navigation")
+	float WaitMin = 5.f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Navigation")
+	float WaitMax = 10.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	EDeathPose DeathPose = EDeathPose::EDP_Alive;
+
+	FTimerHandle PatrolTimer;
 };
