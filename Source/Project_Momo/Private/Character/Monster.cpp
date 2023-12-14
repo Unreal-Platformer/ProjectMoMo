@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "ActorComponent/CharacterStatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/PawnSensingComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "AI/Navigation/NavigationTypes.h"
@@ -36,6 +37,10 @@ AMonster::AMonster()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
+	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
+	PawnSensing->SightRadius = 4000.f;
+	PawnSensing->SetPeripheralVisionAngle(45.f);
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +52,11 @@ void AMonster::BeginPlay()
 	//MoveToTarget(CurrentPatrolTarget);
 
 	GetWorldTimerManager().SetTimer(PatrolTimer, this, &AMonster::PatrolTimerFinished, 5.f);
+
+	if (PawnSensing)
+	{
+		PawnSensing->OnSeePawn.AddDynamic(this, &AMonster::PawnSeen);
+	}
 }
 
 // Called every frame
@@ -65,6 +75,11 @@ void AMonster::CheckPatrolTarget()
 		const float WaitTime = FMath::RandRange(WaitMin, WaitMax);
 		GetWorldTimerManager().SetTimer(PatrolTimer, this, &AMonster::PatrolTimerFinished, WaitTime);
 	}
+}
+
+void AMonster::PawnSeen(APawn* SeenPawn)
+{
+
 }
 
 // Called to bind functionality to input

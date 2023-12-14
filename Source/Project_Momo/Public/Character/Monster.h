@@ -7,6 +7,7 @@
 #include "Monster.generated.h"
 
 class UCharacterStatComponent;
+class UPawnSensingComponent;
 class UAnimMontage;
 class AAIController;
 
@@ -45,9 +46,15 @@ protected:
 	void PatrolTimerFinished();
 	void CheckPatrolTarget();
 
+	UFUNCTION()
+	void PawnSeen(APawn* SeenPawn);
+
 protected:
 	UPROPERTY(VIsibleAnywhere, Category = Stat)
 	UCharacterStatComponent* CharacterStat;
+
+	UPROPERTY(VIsibleAnywhere)
+	UPawnSensingComponent* PawnSensing;
 
 	UPROPERTY(VIsibleAnywhere, Category = Montage)
 	UAnimMontage* DeathMontage;
