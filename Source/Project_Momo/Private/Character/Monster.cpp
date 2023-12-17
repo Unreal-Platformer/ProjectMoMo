@@ -64,7 +64,15 @@ void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckPatrolTarget();
+	if (MonsterState > EMonsterState::EMS_Patrolling)
+	{
+		CheckCombatTarget();
+	}
+	else
+	{
+		CheckPatrolTarget();
+	}
+
 }
 
 void AMonster::CheckPatrolTarget()
@@ -77,9 +85,42 @@ void AMonster::CheckPatrolTarget()
 	}
 }
 
+void AMonster::CheckCombatTarget()
+{
+	if (!InTargetRange(CombatTarget, CombatRadius))
+	{
+		CombatTarget = nullptr;
+		MonsterState = EMonsterState::EMS_Patrolling;
+		GetCharacterMovement()->MaxWalkSpeed = 125.f;
+		MoveToTarget(CurrentPatrolTarget);
+	}
+	else if(MonsterState != EMonsterState::EMS_Chasing && !InTargetRange(CombatTarget, AttackRadius))
+	{
+		MonsterState = EMonsterState::EMS_Chasing;
+		MoveToTarget(CombatTarget);
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+	else if (MonsterState != EMonsterState::EMS_Attacking && !InTargetRange(CombatTarget, AttackRadius))
+	{
+		MonsterState = EMonsterState::EMS_Attacking;
+	}
+}
+
 void AMonster::PawnSeen(APawn* SeenPawn)
 {
+	if (MonsterState == EMonsterState::EMS_Chasing)
+		return;
 
+	if (SeenPawn->ActorHasTag(FName("MomoCharacter")))
+	{
+		MonsterState = EMonsterState::EMS_Chasing;
+
+		GetWorldTimerManager().ClearTimer(PatrolTimer);
+
+		CombatTarget = SeenPawn;
+		MoveToTarget(CombatTarget);
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
 }
 
 // Called to bind functionality to input

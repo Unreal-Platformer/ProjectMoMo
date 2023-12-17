@@ -84,6 +84,8 @@ void AProject_MomoCharacter::BeginPlay()
 		DefaultPlayerController->GetHUDView()->BindCharacterStat(CharacterStat);
 	}
 
+	Tags.Add(FName("MomoCharacter"));
+
 	CharacterStat->SetLifePoint(100.f);
 	CharacterStat->SetTimePoint(100.f);
 }

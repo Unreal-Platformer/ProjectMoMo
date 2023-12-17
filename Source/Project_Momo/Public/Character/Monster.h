@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterTypes.h"
 #include "Monster.generated.h"
 
 class UCharacterStatComponent;
@@ -45,6 +46,7 @@ protected:
 	AActor* ChoosePatrolTarget();
 	void PatrolTimerFinished();
 	void CheckPatrolTarget();
+	void CheckCombatTarget();
 
 	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
@@ -74,11 +76,20 @@ protected:
 	UPROPERTY(EditAnywhere)
 	double PatrolRadius = 200.f;
 
+	UPROPERTY(EditAnywhere)
+	double CombatRadius = 300.f;
+
+	UPROPERTY(EditAnywhere)
+	double AttackRadius = 300.f;
+
 	UPROPERTY(EditAnywhere, Category = "AI Navigation")
 	float WaitMin = 5.f;
 
 	UPROPERTY(EditAnywhere, Category = "AI Navigation")
 	float WaitMax = 10.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	EMonsterState MonsterState = EMonsterState::EMS_Patrolling;
 
 	UPROPERTY(BlueprintReadOnly)
 	EDeathPose DeathPose = EDeathPose::EDP_Alive;
