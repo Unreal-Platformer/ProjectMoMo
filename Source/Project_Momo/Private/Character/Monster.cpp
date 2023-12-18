@@ -52,6 +52,7 @@ void AMonster::BeginPlay()
 	//MoveToTarget(CurrentPatrolTarget);
 
 	GetWorldTimerManager().SetTimer(PatrolTimer, this, &AMonster::PatrolTimerFinished, 5.f);
+	GetCharacterMovement()->MaxWalkSpeed = 125.f;
 
 	if (PawnSensing)
 	{
@@ -100,7 +101,7 @@ void AMonster::CheckCombatTarget()
 		MoveToTarget(CombatTarget);
 		GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	}
-	else if (MonsterState != EMonsterState::EMS_Attacking && !InTargetRange(CombatTarget, AttackRadius))
+	else if (MonsterState != EMonsterState::EMS_Attacking && InTargetRange(CombatTarget, AttackRadius))
 	{
 		MonsterState = EMonsterState::EMS_Attacking;
 	}

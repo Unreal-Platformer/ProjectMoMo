@@ -77,7 +77,7 @@ protected:
 	double PatrolRadius = 200.f;
 
 	UPROPERTY(EditAnywhere)
-	double CombatRadius = 300.f;
+	double CombatRadius = 500.f;
 
 	UPROPERTY(EditAnywhere)
 	double AttackRadius = 300.f;
