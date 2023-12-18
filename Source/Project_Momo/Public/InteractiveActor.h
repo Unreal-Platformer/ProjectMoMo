@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Actor.h"
 #include "InteractiveActor.generated.h"
 
@@ -15,6 +16,9 @@ enum class EAppliedSkill : uint8
 	Slow,
 	Stop
 };
+
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class PROJECT_MOMO_API AInteractiveActor : public AActor
@@ -50,7 +54,17 @@ public:
 
 	UPROPERTY()
 	UStaticMeshComponent* ActorStaticMeshComponent;
+
+	UPROPERTY()
+	UNiagaraComponent* ActorNiagaraSystemComponent;
+
+	TWeakObjectPtr<UMaterialInterface> FresnelMaterialBase;
 	
+	TWeakObjectPtr<UNiagaraSystem> NiagaraSystemBase;
+	
+	UPROPERTY()
+	UMaterialInstanceDynamic* FresnelMaterialInstance;
+
 	UPROPERTY()
 	FVector CurrentActorLinearVelocity;
 
@@ -68,5 +82,6 @@ public:
 
 	UPROPERTY()
 	TArray<FRotator> RotationHistory;
+
 	
 };
