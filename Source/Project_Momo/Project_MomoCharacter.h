@@ -76,6 +76,9 @@ class AProject_MomoCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* CancelSkillKey;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ReadySkillKey;
+	
 	UPROPERTY(VIsibleAnywhere, Category = Stat)
 	UCharacterStatComponent* CharacterStat;
 public:
@@ -105,6 +108,8 @@ private:
 	void LineTraceObject();
 	
 	// 테스트용 기능. 추후 변경 혹은 제거
+	void ReadySkill();
+	void UnReadySkill();
 	void RewindInteractiveActor();
 	void SlowInteractiveActor();
 	void QuickenInteractiveActor();
@@ -126,5 +131,6 @@ private:
 
 	UPROPERTY()
 	ADefaultPlayerController* DefaultPlayerController;
+
 };
 
