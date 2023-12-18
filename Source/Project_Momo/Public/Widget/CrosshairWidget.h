@@ -15,6 +15,9 @@ class PROJECT_MOMO_API UCrosshairWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	void SetPicking(bool Picking);
+
 protected:
 	virtual void NativeConstruct() override;
 
