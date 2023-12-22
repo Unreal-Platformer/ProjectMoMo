@@ -16,6 +16,7 @@
 
 // Sets default values
 AMonster::AMonster()
+	: ABaseCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -25,13 +26,6 @@ AMonster::AMonster()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
-
-	CharacterStat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("CharacterStat"));
-
-	if (CharacterStat)
-	{
-		CharacterStat->OnLifePointIsZero.AddUObject(this, &AMonster::Die);
-	}
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationPitch = false;
@@ -167,6 +161,23 @@ void AMonster::Die()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetLifeSpan(3.f);
+}
+
+void AMonster::Attack()
+{
+}
+
+void AMonster::AttackEnd()
+{
+}
+
+bool AMonster::CanAttack()
+{
+	return false;
+}
+
+void AMonster::PlayAttackMontage()
+{
 }
 
 bool AMonster::InTargetRange(AActor* Target, const double Radius) const

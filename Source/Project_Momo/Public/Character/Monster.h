@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "BaseCharacter.h"
 #include "CharacterTypes.h"
 #include "Monster.generated.h"
 
-class UCharacterStatComponent;
 class UPawnSensingComponent;
 class UAnimMontage;
 class AAIController;
@@ -23,7 +22,7 @@ enum class EDeathPose : uint8
 };
 
 UCLASS()
-class PROJECT_MOMO_API AMonster : public ACharacter
+class PROJECT_MOMO_API AMonster : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -40,7 +39,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	void Die();
+	virtual void Die() override;
+	void Attack();
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
+	bool CanAttack();
+	void PlayAttackMontage();
 	bool InTargetRange(AActor* Target, const double Radius) const;
 	void MoveToTarget(AActor* Target);
 	AActor* ChoosePatrolTarget();
@@ -52,13 +56,10 @@ protected:
 	void PawnSeen(APawn* SeenPawn);
 
 protected:
-	UPROPERTY(VIsibleAnywhere, Category = Stat)
-	UCharacterStatComponent* CharacterStat;
-
 	UPROPERTY(VIsibleAnywhere)
 	UPawnSensingComponent* PawnSensing;
 
-	UPROPERTY(VIsibleAnywhere, Category = Montage)
+	UPROPERTY(VIsibleAnywhere, Category = Montages)
 	UAnimMontage* DeathMontage;
 
 	UPROPERTY()

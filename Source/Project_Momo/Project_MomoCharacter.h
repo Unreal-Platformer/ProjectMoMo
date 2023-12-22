@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Public/Character/BaseCharacter.h"
 #include "Logging/LogMacros.h"
 #include "Project_MomoCharacter.generated.h"
 
@@ -13,7 +13,6 @@ class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
 class AInteractiveActor;
-class UCharacterStatComponent;
 class ADefaultPlayerController;
 
 struct FInputActionValue;
@@ -21,7 +20,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AProject_MomoCharacter : public ACharacter
+class AProject_MomoCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -75,9 +74,6 @@ class AProject_MomoCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* CancelSkillKey;
-
-	UPROPERTY(VIsibleAnywhere, Category = Stat)
-	UCharacterStatComponent* CharacterStat;
 public:
 	AProject_MomoCharacter();
 	
