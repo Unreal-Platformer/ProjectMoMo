@@ -159,7 +159,7 @@ void AProject_MomoCharacter::LineTraceObject()
 
 void AProject_MomoCharacter::ReadySkill()
 {
-	GetWorldSettings()->SetTimeDilation(0.5f);
+	GetWorldSettings()->SetTimeDilation(0.2f);
 	FPostProcessVolumeProperties volume = GetWorld()->PostProcessVolumes[0]->GetProperties();
 	if (volume.bIsUnbound)
 	{
@@ -253,6 +253,7 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		
 		// UnReady
 		EnhancedInputComponent->BindAction(ReadySkillKey, ETriggerEvent::Completed, this, &AProject_MomoCharacter::UnReadySkill);
+		EnhancedInputComponent->BindAction(ReadySkillKey, ETriggerEvent::Canceled, this, &AProject_MomoCharacter::UnReadySkill);
 	}
 	else
 	{
