@@ -20,6 +20,15 @@ struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
+UENUM()
+enum class EReadySkillState : uint8
+{
+	Ready,
+	Unready
+};
+
+DECLARE_EVENT_OneParam(AInteractiveActor, FReadySkillEvent, EReadySkillState);
+
 UCLASS(config=Game)
 class AProject_MomoCharacter : public ACharacter
 {
@@ -116,12 +125,15 @@ private:
 	void StopInteractiveActor();
 	void CancelSkill();
 
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
+	
+	FReadySkillEvent ReadySkillEvent;
+	EReadySkillState ReadySkillState;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveActor)
 	float EffectiveRange = 5000.f;

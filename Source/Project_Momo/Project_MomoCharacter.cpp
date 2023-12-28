@@ -87,6 +87,7 @@ void AProject_MomoCharacter::BeginPlay()
 
 	CharacterStat->SetLifePoint(100.f);
 	CharacterStat->SetTimePoint(100.f);
+	ReadySkillState = EReadySkillState::Unready;
 }
 
 void AProject_MomoCharacter::SavePlayerData()
@@ -160,6 +161,8 @@ void AProject_MomoCharacter::LineTraceObject()
 void AProject_MomoCharacter::ReadySkill()
 {
 	GetWorldSettings()->SetTimeDilation(0.2f);
+	ReadySkillState = EReadySkillState::Ready;
+	ReadySkillEvent.Broadcast(EReadySkillState::Ready);
 	FPostProcessVolumeProperties volume = GetWorld()->PostProcessVolumes[0]->GetProperties();
 	if (volume.bIsUnbound)
 	{
@@ -171,6 +174,8 @@ void AProject_MomoCharacter::ReadySkill()
 void AProject_MomoCharacter::UnReadySkill()
 {
 	GetWorldSettings()->SetTimeDilation(1.0f);
+	ReadySkillState = EReadySkillState::Unready;
+	ReadySkillEvent.Broadcast(EReadySkillState::Unready);
 	FPostProcessVolumeProperties volume = GetWorld()->PostProcessVolumes[0]->GetProperties();
 	if (volume.bIsUnbound)
 	{

@@ -7,6 +7,12 @@
 #include "GameFramework/Actor.h"
 #include "InteractiveActor.generated.h"
 
+
+enum class EReadySkillState : uint8;
+class AProject_MomoCharacter;
+class UNiagaraComponent;
+class UNiagaraSystem;
+
 UENUM()
 enum class EAppliedSkill : uint8
 {
@@ -16,9 +22,6 @@ enum class EAppliedSkill : uint8
 	Slow,
 	Stop
 };
-
-class UNiagaraComponent;
-class UNiagaraSystem;
 
 UCLASS()
 class PROJECT_MOMO_API AInteractiveActor : public AActor
@@ -37,11 +40,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
-	void ResetActorPosition();
+	void ChangeEffectColor(const EAppliedSkill& AppliedSkill);
+	void ChangeEffectColorForReadySkill(EReadySkillState ReadySkillState);
 
 	UFUNCTION()
-	void ReversingActorPosition();
+	void ResetActorPosition();
 
 	UFUNCTION()
 	void ApplySkill(EAppliedSkill ApplySkillType);
@@ -57,6 +60,8 @@ public:
 
 	UPROPERTY()
 	UNiagaraComponent* ActorNiagaraSystemComponent;
+
+	TWeakObjectPtr<AProject_MomoCharacter> PlayerCharacter;
 
 	TWeakObjectPtr<UMaterialInterface> FresnelMaterialBase;
 	
@@ -82,6 +87,4 @@ public:
 
 	UPROPERTY()
 	TArray<FRotator> RotationHistory;
-
-	
 };
