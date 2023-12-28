@@ -61,26 +61,25 @@ void ABaseCharacter::DirectionalHitReact(const FVector& ImpactPoint)
 	const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
 
 	const double CosTheta = FVector::DotProduct(Forward, ToHit);
-	double Theta = FMath::Acos(CosTheta);
-	Theta = FMath::RadiansToDegrees(Theta);
+	double Degree = FMath::RadiansToDegrees(FMath::Acos(CosTheta));
 
 	const FVector CrossProduct = FVector::CrossProduct(Forward, ToHit);
 	if (CrossProduct.Z < 0)
 	{
-		Theta *= -1.f;
+		Degree *= -1.f;
 	}
 
 	FName Section("FromBack");
 
-	if (Theta >= -45.f && Theta < 45.f)
+	if (Degree >= -45.f && Degree < 45.f)
 	{
 		Section = FName("FromFront");
 	}
-	else if (Theta >= -135.f && Theta < -45.f)
+	else if (Degree >= -135.f && Degree < -45.f)
 	{
 		Section = FName("FromLeft");
 	}
-	else if (Theta >= 45.f && Theta < 135.f)
+	else if (Degree >= 45.f && Degree < 135.f)
 	{
 		Section = FName("FromRight");
 	}
