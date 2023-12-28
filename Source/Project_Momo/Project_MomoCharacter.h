@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Public/Character/BaseCharacter.h"
 #include "Logging/LogMacros.h"
 #include "Project_MomoCharacter.generated.h"
 
@@ -13,7 +13,6 @@ class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
 class AInteractiveActor;
-class UCharacterStatComponent;
 class ADefaultPlayerController;
 
 struct FInputActionValue;
@@ -30,7 +29,7 @@ enum class EReadySkillState : uint8
 DECLARE_EVENT_OneParam(AInteractiveActor, FReadySkillEvent, EReadySkillState);
 
 UCLASS(config=Game)
-class AProject_MomoCharacter : public ACharacter
+class AProject_MomoCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -87,9 +86,6 @@ class AProject_MomoCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ReadySkillKey;
-	
-	UPROPERTY(VIsibleAnywhere, Category = Stat)
-	UCharacterStatComponent* CharacterStat;
 public:
 	AProject_MomoCharacter();
 	
@@ -125,7 +121,6 @@ private:
 	void StopInteractiveActor();
 	void CancelSkill();
 
-
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -143,6 +138,5 @@ private:
 
 	UPROPERTY()
 	ADefaultPlayerController* DefaultPlayerController;
-
 };
 
