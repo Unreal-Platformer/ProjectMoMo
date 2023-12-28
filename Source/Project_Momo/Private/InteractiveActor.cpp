@@ -171,7 +171,6 @@ void AInteractiveActor::ApplySkill(EAppliedSkill ApplySkillType)
 	{
 		case EAppliedSkill::Rewind:
 			ActorStaticMeshComponent->SetSimulatePhysics(false);
-			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(0.5,4.2,0.4, 1));
 			break;
 		case EAppliedSkill::Quicken:
 			ActorStaticMeshComponent->SetPhysicsLinearVelocity(2 * CurrentActorLinearVelocity);
