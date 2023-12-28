@@ -6,6 +6,7 @@
 #include "Project_Momo/Project_MomoCharacter.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AInteractiveActor::AInteractiveActor()
@@ -37,6 +38,8 @@ AInteractiveActor::AInteractiveActor()
 	{
 		UE_LOG(LogTemp, Error, TEXT("[%s] Niagara System Load Failed"), *this->GetName());
 	}
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -44,6 +47,7 @@ void AInteractiveActor::BeginPlay()
 {
 	Super::BeginPlay();
 	InitActorPosition = GetActorLocation();
+	
 	ActorStaticMeshComponent = GetComponentByClass<UStaticMeshComponent>();
 	ActorStaticMeshComponent->OnComponentHit.AddDynamic(this, &AInteractiveActor::HandleCollision);
 
@@ -64,6 +68,9 @@ void AInteractiveActor::BeginPlay()
 		FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(0,0,0,0));
 		ActorStaticMeshComponent->SetOverlayMaterial(FresnelMaterialInstance);
 	}
+
+	PlayerCharacter = Cast<AProject_MomoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	PlayerCharacter->ReadySkillEvent.AddUObject(this, &AInteractiveActor::ChangeEffectColorForReadySkill);
 }
 
 // Called every frame
@@ -94,24 +101,58 @@ void AInteractiveActor::Tick(float DeltaTime)
 	}
 }
 
+void AInteractiveActor::ChangeEffectColor(const EAppliedSkill& ApplySkillType)
+{
+	switch (ApplySkillType)
+	{
+	case EAppliedSkill::Rewind:
+		FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(0.5,4.2,0.4, 1));
+		ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(0.5,4.2,0.4));
+		break;
+	case EAppliedSkill::Quicken:
+		FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(8.7, 1.1, 1.1, 1));
+		ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(8.7,1.1,1.1));
+		break;
+	case EAppliedSkill::Slow:
+		FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(9.3, 8.2, 1.55,1));
+		ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(9.3,8.2,1.55));
+		break;
+	case EAppliedSkill::Stop:
+		FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(1.91, 4.0, 10.0,1));
+		ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(1.91,4.0,10.0));
+		break;
+	case EAppliedSkill::None:
+		if (PlayerCharacter->ReadySkillState == EReadySkillState::Ready)
+			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(10,0,0, 1));
+		else
+			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(0,0,0, 0));
+	}
+	
+	ActorStaticMeshComponent->SetOverlayMaterial(FresnelMaterialInstance);
+	if (ApplySkillType == EAppliedSkill::None)
+		ActorNiagaraSystemComponent->Deactivate();
+	else
+		ActorNiagaraSystemComponent->Activate();
+}
+
+void AInteractiveActor::ChangeEffectColorForReadySkill(EReadySkillState ReadySkillState)
+{
+	if(CurrentAppliedSkill != EAppliedSkill::None)
+		return;
+	
+	if (PlayerCharacter->ReadySkillState == EReadySkillState::Ready)
+		FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(10,0,0, 1));
+	else
+		FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"),  FLinearColor(0,0,0, 0));
+	ActorStaticMeshComponent->SetOverlayMaterial(FresnelMaterialInstance);
+}
+
+
 void AInteractiveActor::ResetActorPosition()
 {
 	ActorStaticMeshComponent->SetPhysicsLinearVelocity(FVector(0, 0, 0));
 	ActorStaticMeshComponent->SetPhysicsAngularVelocityInRadians(FVector(0, 0, 0));
 	SetActorLocation(InitActorPosition);
-}
-
-void AInteractiveActor::ReversingActorPosition()
-{
-	ActorStaticMeshComponent->SetSimulatePhysics(false);
-	for(TCheckedPointerIterator<FVector, int, true> Iter = PositionHistory.rbegin(); Iter != PositionHistory.rend(); ++Iter)
-	{
-		ActorStaticMeshComponent->SetWorldLocation(*Iter);
-		if(CurrentAppliedSkill != EAppliedSkill::Rewind)
-			break;
-	}
-	CurrentAppliedSkill = EAppliedSkill::None;
-	ActorStaticMeshComponent->SetSimulatePhysics(true);
 }
 
 void AInteractiveActor::ApplySkill(EAppliedSkill ApplySkillType)
@@ -131,36 +172,25 @@ void AInteractiveActor::ApplySkill(EAppliedSkill ApplySkillType)
 		case EAppliedSkill::Rewind:
 			ActorStaticMeshComponent->SetSimulatePhysics(false);
 			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(0.5,4.2,0.4, 1));
-			ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(0.5,4.2,0.4));
 			break;
 		case EAppliedSkill::Quicken:
 			ActorStaticMeshComponent->SetPhysicsLinearVelocity(2 * CurrentActorLinearVelocity);
 			ActorStaticMeshComponent->SetPhysicsAngularVelocityInRadians(2 * CurrentActorAngularVelocity);
-			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(8.7, 1.1, 1.1, 1));
-			ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(8.7,1.1,1.1));
 			break;
 		case EAppliedSkill::Slow:
 			ActorStaticMeshComponent->SetPhysicsLinearVelocity(0.5f * CurrentActorLinearVelocity);
 			ActorStaticMeshComponent->SetPhysicsAngularVelocityInRadians(0.5f * CurrentActorAngularVelocity);
-			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(9.3, 8.2, 1.55,1));
-			ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(9.3,8.2,1.55));
 			break;
 		case EAppliedSkill::Stop:
 			ActorStaticMeshComponent->SetSimulatePhysics(false);
 			ActorStaticMeshComponent->SetPhysicsLinearVelocity(FVector(0, 0, 0));
 			ActorStaticMeshComponent->SetPhysicsAngularVelocityInRadians(FVector(0, 0, 0));
-			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(1.91, 4.0, 10.0,1));
-			ActorNiagaraSystemComponent->SetVariableVec3(FName("Scale RGB"), FVector(1.91,4.0,10.0));
 			break;
 		default:
 			UE_LOG(LogTemp, Fatal, TEXT("%s: Incorrect ApplySkillType."), *GetName());
 			return;
 	}
-	ActorNiagaraSystemComponent->Activate();
-	
-	UE_LOG(LogTemp, Log, TEXT("%s"), *ActorNiagaraSystemComponent->GetName());
-	
-	ActorStaticMeshComponent->SetOverlayMaterial(FresnelMaterialInstance);
+	ChangeEffectColor(ApplySkillType);
 }
 
 void AInteractiveActor::CancelAppliedSkill()
@@ -197,9 +227,7 @@ void AInteractiveActor::CancelAppliedSkill()
 			return;
 	}
 	CurrentAppliedSkill = EAppliedSkill::None;
-	FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(0,0,0,0));
-	ActorStaticMeshComponent->SetOverlayMaterial(FresnelMaterialInstance);
-	ActorNiagaraSystemComponent->Deactivate();
+	ChangeEffectColor(EAppliedSkill::None);
 }
 
 void AInteractiveActor::HandleCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)

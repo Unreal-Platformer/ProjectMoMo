@@ -87,6 +87,7 @@ void AProject_MomoCharacter::BeginPlay()
 
 	CharacterStat->SetLifePoint(100.f);
 	CharacterStat->SetTimePoint(100.f);
+	ReadySkillState = EReadySkillState::Unready;
 }
 
 void AProject_MomoCharacter::SavePlayerData()
@@ -157,6 +158,32 @@ void AProject_MomoCharacter::LineTraceObject()
 	DefaultPlayerController->GetCrosshairWidget()->SetPicking(TargetInteractiveActor != nullptr);
 }
 
+void AProject_MomoCharacter::ReadySkill()
+{
+	GetWorldSettings()->SetTimeDilation(0.2f);
+	ReadySkillState = EReadySkillState::Ready;
+	ReadySkillEvent.Broadcast(EReadySkillState::Ready);
+	FPostProcessVolumeProperties volume = GetWorld()->PostProcessVolumes[0]->GetProperties();
+	if (volume.bIsUnbound)
+	{
+		FPostProcessSettings* settings = (FPostProcessSettings*)volume.Settings;
+		settings->WhiteTemp = 2500.f;
+	}
+}
+
+void AProject_MomoCharacter::UnReadySkill()
+{
+	GetWorldSettings()->SetTimeDilation(1.0f);
+	ReadySkillState = EReadySkillState::Unready;
+	ReadySkillEvent.Broadcast(EReadySkillState::Unready);
+	FPostProcessVolumeProperties volume = GetWorld()->PostProcessVolumes[0]->GetProperties();
+	if (volume.bIsUnbound)
+	{
+		FPostProcessSettings* settings = (FPostProcessSettings*)volume.Settings;
+		settings->WhiteTemp = 6500.f;
+	}
+}
+
 void AProject_MomoCharacter::RewindInteractiveActor()
 {
 	if(TargetInteractiveActor.IsValid())
@@ -225,6 +252,13 @@ void AProject_MomoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		// Cancel
 		EnhancedInputComponent->BindAction(CancelSkillKey, ETriggerEvent::Started, this, &AProject_MomoCharacter::CancelSkill);
+		
+		// Ready
+		EnhancedInputComponent->BindAction(ReadySkillKey, ETriggerEvent::Started, this, &AProject_MomoCharacter::ReadySkill);
+		
+		// UnReady
+		EnhancedInputComponent->BindAction(ReadySkillKey, ETriggerEvent::Completed, this, &AProject_MomoCharacter::UnReadySkill);
+		EnhancedInputComponent->BindAction(ReadySkillKey, ETriggerEvent::Canceled, this, &AProject_MomoCharacter::UnReadySkill);
 	}
 	else
 	{

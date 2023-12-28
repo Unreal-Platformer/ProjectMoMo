@@ -19,6 +19,15 @@ struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
+UENUM()
+enum class EReadySkillState : uint8
+{
+	Ready,
+	Unready
+};
+
+DECLARE_EVENT_OneParam(AInteractiveActor, FReadySkillEvent, EReadySkillState);
+
 UCLASS(config=Game)
 class AProject_MomoCharacter : public ABaseCharacter
 {
@@ -74,6 +83,9 @@ class AProject_MomoCharacter : public ABaseCharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* CancelSkillKey;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ReadySkillKey;
 public:
 	AProject_MomoCharacter();
 	
@@ -101,6 +113,8 @@ private:
 	void LineTraceObject();
 	
 	// 테스트용 기능. 추후 변경 혹은 제거
+	void ReadySkill();
+	void UnReadySkill();
 	void RewindInteractiveActor();
 	void SlowInteractiveActor();
 	void QuickenInteractiveActor();
@@ -112,7 +126,9 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
+	
+	FReadySkillEvent ReadySkillEvent;
+	EReadySkillState ReadySkillState;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveActor)
 	float EffectiveRange = 5000.f;
