@@ -26,6 +26,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 // AProject_MomoCharacter
 
 AProject_MomoCharacter::AProject_MomoCharacter()
+	: ABaseCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -63,9 +64,6 @@ AProject_MomoCharacter::AProject_MomoCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-
-	CharacterStat = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("CharacterStat"));
-
 }
 
 void AProject_MomoCharacter::BeginPlay()
@@ -84,6 +82,8 @@ void AProject_MomoCharacter::BeginPlay()
 
 		DefaultPlayerController->GetHUDView()->BindCharacterStat(CharacterStat);
 	}
+
+	Tags.Add(FName("MomoCharacter"));
 
 	CharacterStat->SetLifePoint(100.f);
 	CharacterStat->SetTimePoint(100.f);
