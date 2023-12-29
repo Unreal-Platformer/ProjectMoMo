@@ -61,8 +61,6 @@ void AInteractiveActor::BeginPlay()
 	
 	PositionHistory.Reserve(10000);
 	RotationHistory.Reserve(10000);
-	LinearVelocityHistory.Reserve(10000);
-	AngularVelocityHistory.Reserve(10000);
 	
 	if (FresnelMaterialBase.IsValid())
 	{

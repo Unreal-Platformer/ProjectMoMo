@@ -87,10 +87,4 @@ public:
 
 	UPROPERTY()
 	TArray<FRotator> RotationHistory;
-
-	UPROPERTY()
-	TArray<FVector> LinearVelocityHistory;
-
-	UPROPERTY()
-	TArray<FVector> AngularVelocityHistory;
 };
