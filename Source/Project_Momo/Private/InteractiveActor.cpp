@@ -59,7 +59,8 @@ void AInteractiveActor::BeginPlay()
 		ActorNiagaraSystemComponent->Deactivate();
 	}
 	
-	PositionHistory.Reserve(2000);
+	PositionHistory.Reserve(10000);
+	RotationHistory.Reserve(10000);
 	
 	if (FresnelMaterialBase.IsValid())
 	{
@@ -80,9 +81,22 @@ void AInteractiveActor::Tick(float DeltaTime)
 
 	if (CurrentAppliedSkill != EAppliedSkill::Rewind)
 	{
-		PositionHistory.Push(ActorStaticMeshComponent->GetComponentLocation());
-		RotationHistory.Push(ActorStaticMeshComponent->GetComponentRotation());
-		if(PositionHistory.Num() > 1000 || RotationHistory.Num() > 1000)
+		const FVector& CurrLocation = ActorStaticMeshComponent->GetComponentLocation();
+		const FRotator& CurrRotation = ActorStaticMeshComponent->GetComponentRotation();
+		if(PlayerCharacter->ReadySkillState == EReadySkillState::Unready && PositionHistory.Num() != 0)
+		{
+			for(int32 loop = 1; loop <= 5; loop++)
+			{
+				PositionHistory.Push(((CurrLocation - PositionHistory.Last()) * loop * 0.2) + PositionHistory.Last());
+				RotationHistory.Push(((CurrRotation - RotationHistory.Last()) * loop * 0.2) + RotationHistory.Last());
+			}
+		}
+		else
+		{
+			PositionHistory.Push(CurrLocation);
+			RotationHistory.Push(CurrRotation);
+		}
+		if(PositionHistory.Num() > 5000 || RotationHistory.Num() > 5000)
 		{
 			PositionHistory.RemoveAt(0);
 			RotationHistory.RemoveAt(0);
@@ -94,6 +108,16 @@ void AInteractiveActor::Tick(float DeltaTime)
 		ActorStaticMeshComponent->SetWorldRotation(RotationHistory.Last());
 		PositionHistory.Pop();
 		RotationHistory.Pop();
+		if(PlayerCharacter->ReadySkillState == EReadySkillState::Unready)
+		{
+			for(int32 loop = 0; loop < 4; loop++)
+			{
+				if(PositionHistory.Num() == 0 || RotationHistory.Num() == 0)
+					break;
+				PositionHistory.Pop();
+				RotationHistory.Pop();
+			}
+		}
 		if(PositionHistory.Num() == 0 || RotationHistory.Num() == 0)
 		{
 			CancelAppliedSkill();
@@ -171,7 +195,6 @@ void AInteractiveActor::ApplySkill(EAppliedSkill ApplySkillType)
 	{
 		case EAppliedSkill::Rewind:
 			ActorStaticMeshComponent->SetSimulatePhysics(false);
-			FresnelMaterialInstance->SetVectorParameterValue(TEXT("Fresnel Color"), FLinearColor(0.5,4.2,0.4, 1));
 			break;
 		case EAppliedSkill::Quicken:
 			ActorStaticMeshComponent->SetPhysicsLinearVelocity(2 * CurrentActorLinearVelocity);
